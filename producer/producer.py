@@ -1,10 +1,12 @@
 import random
 import time
 import csv
+import socket
+import json
 
 
-FILE_PATH = "./ml-1m/ratings.dat"
-SAMPLE_SIZE = 200000
+FILE_PATH = "../ml-1m/ratings.dat"
+SAMPLE_SIZE = 20
 
 
 def loadSample(filePath: str, qtdSamples: int):
@@ -22,24 +24,38 @@ def loadSample(filePath: str, qtdSamples: int):
             data[3] = data[3].replace("'", "")
             samplelist.append(data)
 
-    return samplelist
+        resJson = json.dumps(samplelist)
+    return resJson
 
 
-def writeFile(data):
-    header = ['user_id', 'movie_id', 'rating', 'time_stamp']
-    with open("./database/evaluations.csv", "w", newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(header)
+# def writeFile(data):
+#     header = ['user_id', 'movie_id', 'rating', 'time_stamp']
+#     with open("../database/evaluations"+time.strftime("%d%b%Y%H%M%S", time.gmtime())+".csv", "w", newline='') as f:
+#         writer = csv.writer(f)
+#         writer.writerow(header)
 
-        writer.writerows(data)
+#         writer.writerows(data)
 
 
 def main():
+    s = socket.socket()
+    host = "127.0.0.1"
+    port = 4458
+    s.bind((host, port))
+
+    print("Listening on port: %s..." % str(port))
+
+    s.listen()
+    c, addr = s.accept()
+
+    print("Received request from: " + str(addr))
+
     while True:
         data = loadSample(FILE_PATH, SAMPLE_SIZE)
-        writeFile(data)
+        # writeFile(data)
         print("New sample written")
-        time.sleep(5)
+        c.send(bytes((data+'\n').encode('utf-8')))
+        time.sleep(10)
 
 
 if __name__ == "__main__":
