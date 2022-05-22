@@ -1,12 +1,12 @@
-import random
+
 import time
-import csv
 import socket
 import json
+import numpy as np
 
 
 FILE_PATH = "../ml-1m/ratings.dat"
-SAMPLE_SIZE = 20
+SAMPLE_SIZE = 100000
 
 
 def loadSample(filePath: str, qtdSamples: int):
@@ -15,7 +15,9 @@ def loadSample(filePath: str, qtdSamples: int):
     with open(filePath, "rb") as file:
         read = file.read().splitlines()
 
-        sample = random.choices(read, k=qtdSamples)
+        # sample = random.choices(read, k=qtdSamples)
+
+        sample = np.random.choice(read, qtdSamples)
         for s in sample:
             s = str(s)
             data = s.split('::')
@@ -24,8 +26,7 @@ def loadSample(filePath: str, qtdSamples: int):
             data[3] = data[3].replace("'", "")
             samplelist.append(data)
 
-        resJson = json.dumps(samplelist)
-    return resJson
+    return samplelist
 
 
 # def writeFile(data):
@@ -43,6 +44,8 @@ def main():
     port = 4458
     s.bind((host, port))
 
+    data = open(FILE_PATH).read().splitlines()
+
     print("Listening on port: %s..." % str(port))
 
     s.listen()
@@ -50,11 +53,15 @@ def main():
 
     print("Received request from: " + str(addr))
 
+    data = loadSample(FILE_PATH, SAMPLE_SIZE)
     while True:
-        data = loadSample(FILE_PATH, SAMPLE_SIZE)
-        # writeFile(data)
+
+        for line in data:
+            lineJson = json.dumps(line)
+            c.send(bytes((lineJson+'\n').encode('utf-8')))
+
         print("New sample written")
-        c.send(bytes((data+'\n').encode('utf-8')))
+
         time.sleep(10)
 
 

@@ -18,28 +18,22 @@ def convertToJSON(entry):
 def splitEntry(entry):
     data = list()
     for reg in entry:
-        data.append((reg[1], reg[2]))
+        data.append((reg[1], int(reg[2])))
     return data
 
 
-dataJson = socket_stream.map(convertToJSON)
-pairs = dataJson.map(splitEntry)
+count = socket_stream.map(convertToJSON).map(
+    lambda x: (str(x[1]), 1)).reduceByKey(lambda a, b: a+b)
 
-pairs.pprint()
+pairList = socket_stream.map(convertToJSON).map(
+    lambda x: (str(x[1]), float(x[2]))).reduceByKey(lambda a, b: a+b)
 
 
-# movieRatings = interactions.map(lambda x: (int(x.split('::')[1]), [float(x.split('::')[2]),1]))
-#     totalOfMovieRatings = movieRatings.reduceByKey(lambda x, y: [x[0] + y[0],x[1]+y[1]])
+pairList.pprint()
 
-# res = pairs.reduceByKey(lambda a, b: a+b)
+count.pprint()
 
-# res.pprint()
-
-# ratings = ssc.textFileStream("../database/").map
-# ratings.pprint()
 
 ssc.start()
 
 ssc.awaitTermination()
-# WARN RandomBlockReplicationPolicy: Expecting 1 replicas with only 0 peer/s.
-# WARN BlockManager: Block input-0-1653087338600 replicated to only 0 peer(s) instead of 1 peers
