@@ -15,23 +15,19 @@ def convertToJSON(entry):
     return json.loads(entry)
 
 
-def splitEntry(entry):
-    data = list()
-    for reg in entry:
-        data.append((reg[1], int(reg[2])))
-    return data
-
-
 count = socket_stream.map(convertToJSON).map(
     lambda x: (str(x[1]), 1)).reduceByKey(lambda a, b: a+b)
 
 pairList = socket_stream.map(convertToJSON).map(
     lambda x: (str(x[1]), float(x[2]))).reduceByKey(lambda a, b: a+b)
 
+top_ten = pairList.join(count).map(lambda x: (x[0], round(x[1][0]/x[1][1], 2)))
 
 pairList.pprint()
 
 count.pprint()
+
+top_ten.pprint()
 
 
 ssc.start()
