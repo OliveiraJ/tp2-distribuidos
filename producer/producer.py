@@ -6,7 +6,7 @@ import numpy as np
 
 
 FILE_PATH = "../ml-1m/ratings.dat"
-SAMPLE_SIZE = 100000
+SAMPLE_SIZE = 200000
 
 
 def loadSample(filePath: str, qtdSamples: int):
@@ -62,7 +62,7 @@ def main():
 
         print("New sample written")
 
-        time.sleep(10)
+        time.sleep(15)
 
 
 if __name__ == "__main__":
