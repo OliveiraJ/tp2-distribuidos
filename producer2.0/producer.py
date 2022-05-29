@@ -9,7 +9,7 @@ import pickle
 FILE_PATH = "../ml-1m/ratings.dat"
 
 # the size of the sample we will send to the cosumer
-SAMPLE_SIZE = 100
+SAMPLE_SIZE = 2000
 BUFFER_SIZE = 1024
 
 HEADERSIZE = 10

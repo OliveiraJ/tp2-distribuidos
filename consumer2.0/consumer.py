@@ -64,7 +64,7 @@ def main():
         new_msg = True
 
         while True:
-            res = client.recv(4096)
+            res = client.recv(80192)
 
             if new_msg:
                 msglen = int(res[:HEADERSIZE])
