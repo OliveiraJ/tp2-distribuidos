@@ -1,12 +1,30 @@
 from pprint import pprint
+from unittest import result
+import numpy as np
 import json
 from pyspark import SparkContext
 from pyspark.streaming import StreamingContext
 from pyspark import StorageLevel
 
+FILE_PATH = "../ml-1m/movies.dat"
 
 sc = SparkContext()
 ssc = StreamingContext(sc, 15)
+
+
+# def loadMovies(filePath: str):
+#     movies = {}
+
+#     with open(filePath, "rb") as file:
+#         for line in file:
+#             data = line.split(bytes('::'.encode('utf-8')))
+#             key = str(data[0]).replace("b'", "").replace("'", "")
+#             movies[key] = str(data[1]).replace("'", "").replace("b", "")
+#     return movies
+
+
+# movies = loadMovies(FILE_PATH)
+
 
 # connects to the server and starts to receive data from the producer
 socket_stream = ssc.socketTextStream(
@@ -31,7 +49,6 @@ top_ten = pairList.join(count).map(lambda x: (x[0], round(
 
 
 top_ten.pprint(10)
-
 ssc.start()
 
 ssc.awaitTermination()
